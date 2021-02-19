@@ -7,11 +7,10 @@ import static org.junit.Assert.*;
 //Autor: 7862288
 
 public class FollowposTableGeneratorTest {
-    // TODO zweiter Vistor: Eyyüp
     // test fuer zweiten Visitor bzw. dem FollowposTableGenerator
     @Test
-    public void followPosTabeGeneratorTest() {
-        // Ertellen eines Syntaxbaum
+    public void followPosTableGeneratorTest() {
+        // Erstellen eines Syntaxbaum
         Visitable syntaxTreeWithValues = createSyntaxTree();
 
         SortedMap<Integer, FollowposTableEntry> followPosTableEntries = createFollowPosTable();
@@ -24,9 +23,9 @@ public class FollowposTableGeneratorTest {
                 generator.getFollowposTable());     // tatsaechliches Ergebnis
     }
 
-    //Hard kodierte SyntaxTree
+    //Hart kodierte SyntaxTree
     private Visitable createSyntaxTree() {
-        //Verwendung der Regex mit terminierendes Symbol (a|b)^*cd^*#
+        //Verwendung der Regex aus der Vorlesung mit terminierendes Symbol (a|b)*cd*#
 
         //linkes Blatt "a" auf der Position 1
         OperandNode left = new OperandNode("a");
@@ -34,7 +33,6 @@ public class FollowposTableGeneratorTest {
         left.lastpos.add(1);
         left.position = 1;
         left.nullable = false;
-
 
         //rechtes Blatt "b" auf der Position 2
         OperandNode right = new OperandNode("b");
@@ -95,43 +93,44 @@ public class FollowposTableGeneratorTest {
         right.nullable = false;
 
         //abschließender Knoten "°"
-        left2 = new BinOpNode("°", (Visitable) left2, right);
-        left2.firstpos.addAll(Arrays.asList(1, 2, 3));
-        left2.lastpos.add(5);
-        left2.nullable = false;
+        SyntaxNode newTree = new BinOpNode("°", (Visitable) left2, right);
+        newTree.firstpos.addAll(Arrays.asList(1, 2, 3));
+        newTree.lastpos.add(5);
+        newTree.nullable = false;
 
-        //Rückgabe
-        return (Visitable) left2;
+        //Rückgabe abschließender Syntaxbaum
+        return (Visitable) newTree;
     }
 
-    //FollowPos Tabelle mit den Eingabesymbolen a,b,c,d und #
-    protected SortedMap<Integer, FollowposTableEntry> createFollowPosTable() {
+    //Erstellen Followpos-Tabelle mit den Eingabesymbolen a,b,c,d und #
+    private SortedMap<Integer, FollowposTableEntry> createFollowPosTable() {
         SortedMap<Integer, FollowposTableEntry> followPosTableGenerated = new TreeMap<>();
 
-        FollowposTableEntry entry = new FollowposTableEntry(1, "a");
-        entry.followpos.addAll(Arrays.asList(1, 2, 3));
-        followPosTableGenerated.put(1, entry);
+        //Eintrag des Eingabesymbols "a"
+        FollowposTableEntry followposEntry = new FollowposTableEntry(1, "a");
+        followposEntry.followpos.addAll(Arrays.asList(1, 2, 3));
+        followPosTableGenerated.put(1, followposEntry);
 
-        entry = new FollowposTableEntry(2, "b");
-        entry.followpos.addAll(Arrays.asList(1, 2, 3));
-        followPosTableGenerated.put(2, entry);
+        //Eintrag des Eingabesymbols "b"
+        followposEntry = new FollowposTableEntry(2, "b");
+        followposEntry.followpos.addAll(Arrays.asList(1, 2, 3));
+        followPosTableGenerated.put(2, followposEntry);
 
-        entry = new FollowposTableEntry(3, "c");
-        entry.followpos.addAll(Arrays.asList(4,5));
-        followPosTableGenerated.put(3, entry);
+        //Eintrag des Eingabesymbols "c"
+        followposEntry = new FollowposTableEntry(3, "c");
+        followposEntry.followpos.addAll(Arrays.asList(4,5));
+        followPosTableGenerated.put(3, followposEntry);
 
-        entry = new FollowposTableEntry(4, "d");
-        entry.followpos.addAll(Arrays.asList(4,5));
-        followPosTableGenerated.put(4, entry);
+        //Eintrag des Eingabesymbols "d"
+        followposEntry = new FollowposTableEntry(4, "d");
+        followposEntry.followpos.addAll(Arrays.asList(4,5));
+        followPosTableGenerated.put(4, followposEntry);
 
-        entry = new FollowposTableEntry(5, "#");
-        followPosTableGenerated.put(5, entry);
+        //Eintrag des Eingabesymbols "#"
+        followposEntry = new FollowposTableEntry(5, "#");
+        followPosTableGenerated.put(5, followposEntry);
 
+        //Rückgabe des generierten Followpos Tabelle
         return followPosTableGenerated;
-    }
-    @Test
-    public void addAll() {
-        int a = 2, b = 3, sum = a+b;
-        assertEquals(5, sum);
     }
 }

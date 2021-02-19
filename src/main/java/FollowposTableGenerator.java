@@ -4,7 +4,6 @@ import java.util.TreeMap;
 //Autor: 7862288
 
 public class FollowposTableGenerator implements Visitor {
-    // TODO zweiter Vistor: Eyyüp
 
     //Dekleration eines TreeMaps
     private final SortedMap<Integer, FollowposTableEntry> FollowposTableEntries = new TreeMap<>();
