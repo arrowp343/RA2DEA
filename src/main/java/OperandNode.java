@@ -9,4 +9,4 @@ public class OperandNode extends SyntaxNode implements Visitable {
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
-}
+}   // war vorgegeben, muss nichts mehr gemacht werden
