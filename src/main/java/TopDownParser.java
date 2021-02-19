@@ -58,7 +58,7 @@ public class TopDownParser {
             match('#');
             assertEndOfInput();
             OperandNode opNode = new OperandNode("#");
-            opNode.position = this.leafPosition;
+            opNode.position = leafPosition;
             return new BinOpNode("°", regExp, opNode);
         }
         else if (eingabe.charAt(position) == '#')
@@ -66,7 +66,7 @@ public class TopDownParser {
             match('#');
             assertEndOfInput();
             OperandNode opNode = new OperandNode("#");
-            opNode.position = this.leafPosition;
+            opNode.position = leafPosition;
             return opNode;
         }
         else
@@ -84,8 +84,8 @@ public class TopDownParser {
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
                 eingabe.charAt(position) == '(')
         {
-            Visitable term = this.term(null);
-            return this.RE(term);
+            Visitable termHolder = term(null);
+            return this.RE(termHolder);
         }
         else throw new RuntimeException("Syntax error!");
     }
@@ -96,11 +96,9 @@ public class TopDownParser {
      */
     private Visitable RE(Visitable parameter) {
         if (eingabe.charAt(position) == '|') {
-            this.match('|');
-            // Prepare return value
-            Visitable term = this.term(null);
-            Visitable root = new BinOpNode("|", parameter, term);
-            return this.RE(root);
+            match('|');
+            Visitable termHolder = term(null);
+            return RE(new BinOpNode("|", parameter, termHolder));
         }
         else if (eingabe.charAt(position) == ')') {
             return parameter;
@@ -117,12 +115,12 @@ public class TopDownParser {
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
                 eingabe.charAt(position) == '(')
         {
-            Visitable factor = this.factor(null);
+            Visitable factorHolder = factor(null);
             Visitable termHolder;
             if (parameter != null) {
-                termHolder = this.term(new BinOpNode("°", parameter, factor));
+                termHolder = term(new BinOpNode("°", parameter, factorHolder));
             } else {
-                termHolder = this.term(factor);
+                termHolder = term(factorHolder);
             }
             return termHolder;
         }
@@ -146,10 +144,13 @@ public class TopDownParser {
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
                 eingabe.charAt(position) == '(')
         {
-            Visitable elem = this.elem(null);
-            return this.hOp(elem);
+            Visitable elemHolder = elem(null);
+            return hOp(elemHolder);
         }
-        else throw new RuntimeException("Syntax error!");
+        else
+        {
+            throw new RuntimeException("Syntax error!");
+        }
     }
     /**
      *
@@ -169,12 +170,15 @@ public class TopDownParser {
                 eingabe.charAt(position) == '+' ||
                 eingabe.charAt(position) == '?')
         {
-            char curChar = eingabe.charAt(position);
-            this.match(curChar);
-            String curStr = Character.toString(curChar);
-            return new UnaryOpNode(curStr, parameter);
+            char currentChar = eingabe.charAt(position);
+            match(currentChar);
+            String currentString = Character.toString(currentChar);
+            return new UnaryOpNode(currentString, parameter);
         }
-        else throw new RuntimeException("Syntax error!");
+        else
+        {
+            throw new RuntimeException("Syntax error!");
+        }
     }
     /**
      *
@@ -185,7 +189,7 @@ public class TopDownParser {
         if (Character.isLetter(eingabe.charAt(position)) ||
                 Character.isDigit(eingabe.charAt(position)))
         {
-            return this.alphanum(null);
+            return alphanum(null);
         }
         else if (eingabe.charAt(position) == '(') {
             match('(');
@@ -204,15 +208,17 @@ public class TopDownParser {
         if (Character.isLetter(eingabe.charAt(position)) ||
                 Character.isDigit(eingabe.charAt(position)))
         {
-            char curChar = eingabe.charAt(position);
-            this.match(curChar);
-            // Prepare return value
-            String symbol = Character.toString(curChar);
+            char currentChar = eingabe.charAt(position);
+            match(currentChar);
+            String symbol = Character.toString(currentChar);
             OperandNode opNode = new OperandNode(symbol);
             opNode.position = leafPosition;
             leafPosition++;
             return opNode;
         }
-        else throw new RuntimeException("Syntax error!");
+        else
+        {
+            throw new RuntimeException("Syntax error!");
+        }
     }
 }
