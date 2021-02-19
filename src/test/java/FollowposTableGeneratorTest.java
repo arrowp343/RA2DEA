@@ -1,9 +1,8 @@
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 //Autor: 7862288
 
@@ -11,7 +10,6 @@ public class FollowposTableGeneratorTest {
     // TODO zweiter Vistor: Eyyüp
     // test fuer zweiten Visitor bzw. dem FollowposTableGenerator
     @Test
-    @DisplayName("Test for FollowposTableGenerator")
     public void followPosTabeGeneratorTest() {
         // Ertellen eines Syntaxbaum
         Visitable syntaxTreeWithValues = createSyntaxTree();
@@ -130,5 +128,10 @@ public class FollowposTableGeneratorTest {
         followPosTableGenerated.put(5, entry);
 
         return followPosTableGenerated;
+    }
+    @Test
+    public void addAll() {
+        int a = 2, b = 3, sum = a+b;
+        assertEquals(5, sum);
     }
 }
