@@ -10,31 +10,31 @@ public class ParserTest {
     @Test(expected = Exception.class)
     public void invalidSyntax_Hash() {
         TopDownParser parser = new TopDownParser("(a)");
-        Visitable syntaxTree = parser.start(null);
+        parser.start(null);
     }
 
     @Test(expected = Exception.class)
     public void invalidSyntax_ParenthesisClosing() {
         TopDownParser parser = new TopDownParser("(a#");
-        Visitable syntaxTree = parser.start(null);
+        parser.start(null);
     }
 
     @Test(expected = Exception.class)
     public void invalidSyntax_ParenthesisOpening() {
         TopDownParser parser = new TopDownParser("a)#");
-        Visitable syntaxTree = parser.start(null);
+        parser.start(null);
     }
 
     @Test(expected = Exception.class)
     public void invalidSyntax_Operator() {
         TopDownParser parser = new TopDownParser("(+a)#");
-        Visitable syntaxTree = parser.start(null);
+        parser.start(null);
     }
 
     @Test(expected = Exception.class)
     public void invalidSyntax_OperatorUnknown() {
         TopDownParser parser = new TopDownParser("(a.b|cd)#");
-        Visitable syntaxTree = parser.start(null);
+        parser.start(null);
     }
 
     @Test
