@@ -1,7 +1,10 @@
 import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class SyntaxTreeEvaluatorTest {
+
+    // creator matrikel-nr: 2832690
+
     @Test
     public void syntaxTreeEvaluatorTest() {
         // Regulärer Ausdruck aus Vorlesung: (a|b)*cd*

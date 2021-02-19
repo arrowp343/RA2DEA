@@ -1,4 +1,7 @@
 public class SyntaxTreeEvaluator implements Visitor{
+
+    // creator matrikel-nr: 2832690
+
     public void visit(OperandNode node){
         if(node.symbol==null){
             node.nullable=true;
