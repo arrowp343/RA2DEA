@@ -29,10 +29,6 @@ public class TopDownParser {
         parser.start(null);
     }
 
-    private char currentSymbol() {
-        return eingabe.charAt(position);
-    }
-
     private void assertEndOfInput() {
         if (this.position < this.eingabe.length()) {
             throw new RuntimeException("No end of input reached!");
@@ -40,7 +36,7 @@ public class TopDownParser {
     }
 
     public Visitable start(Visitable parameter){
-        if (this.currentSymbol() == '(') {
+        if (eingabe.charAt(position) == '(') {
             this.match('(');
             Visitable regExp = this.RegExp(null);
             this.match(')');
@@ -51,7 +47,7 @@ public class TopDownParser {
             leaf.position = this.leafPosition;
             return new BinOpNode("°", regExp, leaf);
         }
-        else if (this.currentSymbol() == '#') {
+        else if (eingabe.charAt(position) == '#') {
             this.match('#');
             this.assertEndOfInput();
             // Prepare return value
@@ -63,9 +59,9 @@ public class TopDownParser {
     }
 
     private Visitable RegExp(Visitable parameter) {
-        if (Character.isLetter(this.currentSymbol()) ||   // a..z, A..z
-                Character.isDigit(this.currentSymbol()) ||    // 0..9
-                this.currentSymbol() == '(')
+        if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
+                Character.isDigit(eingabe.charAt(position)) ||    // 0..9
+                eingabe.charAt(position) == '(')
         {
             // Prepare return value
             Visitable term = this.term(null);
@@ -75,23 +71,23 @@ public class TopDownParser {
     }
 
     private Visitable RE(Visitable parameter) {
-        if (this.currentSymbol() == '|') {
+        if (eingabe.charAt(position) == '|') {
             this.match('|');
             // Prepare return value
             Visitable term = this.term(null);
             Visitable root = new BinOpNode("|", parameter, term);
             return this.RE(root);
         }
-        else if (this.currentSymbol() == ')') {
+        else if (eingabe.charAt(position) == ')') {
             return parameter;
         }
         else throw new RuntimeException("Syntax error!");
     }
 
     private Visitable term(Visitable parameter) {
-        if (Character.isLetter(this.currentSymbol()) ||   // a..z, A..z
-                Character.isDigit(this.currentSymbol()) ||    // 0..9
-                this.currentSymbol() == '(')
+        if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
+                Character.isDigit(eingabe.charAt(position)) ||    // 0..9
+                eingabe.charAt(position) == '(')
         {
             // Prepare return value
             Visitable factor = this.factor(null);
@@ -104,8 +100,8 @@ public class TopDownParser {
             }
             return term;
         }
-        else if (this.currentSymbol() == '|' ||
-                this.currentSymbol() == ')')
+        else if (eingabe.charAt(position) == '|' ||
+                eingabe.charAt(position) == ')')
         {
             return parameter;
         }
@@ -113,9 +109,9 @@ public class TopDownParser {
     }
 
     private Visitable factor(Visitable parameter) {
-        if (Character.isLetter(this.currentSymbol()) ||   // a..z, A..z
-                Character.isDigit(this.currentSymbol()) ||    // 0..9
-                this.currentSymbol() == '(')
+        if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
+                Character.isDigit(eingabe.charAt(position)) ||    // 0..9
+                eingabe.charAt(position) == '(')
         {
             // Prepare return value
             Visitable elem = this.elem(null);
@@ -125,19 +121,19 @@ public class TopDownParser {
     }
 
     private Visitable hOp(Visitable parameter) {
-        if (Character.isLetter(this.currentSymbol()) ||   // a..z, A..z
-                Character.isDigit(this.currentSymbol()) ||    // 0..9
-                this.currentSymbol() == '(' ||
-                this.currentSymbol() == '|' ||
-                this.currentSymbol() == ')')
+        if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
+                Character.isDigit(eingabe.charAt(position)) ||    // 0..9
+                eingabe.charAt(position) == '(' ||
+                eingabe.charAt(position) == '|' ||
+                eingabe.charAt(position) == ')')
         {
             return parameter;
         }
-        else if (this.currentSymbol() == '*' ||
-                this.currentSymbol() == '+' ||
-                this.currentSymbol() == '?')
+        else if (eingabe.charAt(position) == '*' ||
+                eingabe.charAt(position) == '+' ||
+                eingabe.charAt(position) == '?')
         {
-            char curChar = this.currentSymbol();
+            char curChar = eingabe.charAt(position);
             this.match(curChar);
             String curStr = Character.toString(curChar);
             return new UnaryOpNode(curStr, parameter);
@@ -146,12 +142,12 @@ public class TopDownParser {
     }
 
     private Visitable elem(Visitable parameter) {
-        if (Character.isLetter(this.currentSymbol()) ||
-                Character.isDigit(this.currentSymbol()))
+        if (Character.isLetter(eingabe.charAt(position)) ||
+                Character.isDigit(eingabe.charAt(position)))
         {
             return this.alphanum(null);
         }
-        else if (this.currentSymbol() == '(') {
+        else if (eingabe.charAt(position) == '(') {
             this.match('(');
             Visitable regExp = this.RegExp(null);
             this.match(')');
@@ -161,10 +157,10 @@ public class TopDownParser {
     }
 
     private Visitable alphanum(Visitable parameter) {
-        if (Character.isLetter(this.currentSymbol()) ||
-                Character.isDigit(this.currentSymbol()))
+        if (Character.isLetter(eingabe.charAt(position)) ||
+                Character.isDigit(eingabe.charAt(position)))
         {
-            char curChar = this.currentSymbol();
+            char curChar = eingabe.charAt(position);
             this.match(curChar);
             // Prepare return value
             String symbol = Character.toString(curChar);
