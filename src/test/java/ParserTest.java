@@ -8,115 +8,115 @@ import static org.junit.Assert.assertTrue;
 
 public class ParserTest {
     @Test(expected = Exception.class)
-    public void invalidSyntax_Hash() {
-        TopDownParser parser = new TopDownParser("(a)");
+    public void without_Hash() {
+        TopDownParser parser = new TopDownParser("(bb)");
         parser.start(null);
     }
 
     @Test(expected = Exception.class)
-    public void invalidSyntax_ParenthesisClosing() {
-        TopDownParser parser = new TopDownParser("(a#");
+    public void without_Parenthesis() {
+        TopDownParser parser = new TopDownParser("(abc#");
         parser.start(null);
     }
 
     @Test(expected = Exception.class)
-    public void invalidSyntax_ParenthesisOpening() {
-        TopDownParser parser = new TopDownParser("a)#");
+    public void without_ParenthesisO() {
+        TopDownParser parser = new TopDownParser("ccc)#");
         parser.start(null);
     }
 
     @Test(expected = Exception.class)
     public void invalidSyntax_Operator() {
-        TopDownParser parser = new TopDownParser("(+a)#");
+        TopDownParser parser = new TopDownParser("(+xxx)#");
         parser.start(null);
     }
 
     @Test(expected = Exception.class)
-    public void invalidSyntax_OperatorUnknown() {
-        TopDownParser parser = new TopDownParser("(a.b|cd)#");
+    public void unknownOperator() {
+        TopDownParser parser = new TopDownParser("(b.b)#");
         parser.start(null);
     }
 
     @Test
-    public void validSyntax_Concat() {
-        TopDownParser parser = new TopDownParser("(abc)#");
+    public void validSyntax() {
+        TopDownParser parser = new TopDownParser("(ggg)#");
         Visitable syntaxTree = parser.start(null);
 
-        Visitable left = new OperandNode("a");
+        Visitable left = new OperandNode("g");
         ((OperandNode) left).position = 1;
-        Visitable right = new OperandNode("b");
+        Visitable right = new OperandNode("g");
         ((OperandNode) right).position = 2;
         left = new BinOpNode("°", left, right);
-        right = new OperandNode("c");
+        right = new OperandNode("g");
         ((OperandNode) right).position = 3;
         left = new BinOpNode("°", left, right);
         right = new OperandNode("#");
         ((OperandNode) right).position = 4;
         Visitable refTree = new BinOpNode("°", left, right);
 
-        assertTrue(treeCmp(syntaxTree, refTree));
+        assertTrue(baumVergleich(syntaxTree, refTree));
     }
 
     @Test
     public void validSyntax_Alternative() {
-        TopDownParser parser = new TopDownParser("(a|b)#");
+        TopDownParser parser = new TopDownParser("(b|c)#");
         Visitable syntaxTree = parser.start(null);
 
-        Visitable left = new OperandNode("a");
+        Visitable left = new OperandNode("b");
         ((OperandNode) left).position = 1;
-        Visitable right = new OperandNode("b");
+        Visitable right = new OperandNode("c");
         ((OperandNode) right).position = 2;
         left = new BinOpNode("|", left, right);
         right = new OperandNode("#");
         ((OperandNode) right).position = 3;
         Visitable refTree = new BinOpNode("°", left, right);
 
-        assertTrue(treeCmp(syntaxTree, refTree));
+        assertTrue(baumVergleich(syntaxTree, refTree));
     }
 
     @Test
     public void validSyntax_KleeneStar() {
-        TopDownParser parser = new TopDownParser("(a*)#");
+        TopDownParser parser = new TopDownParser("(s*)#");
         Visitable syntaxTree = parser.start(null);
 
-        Visitable subNode = new OperandNode("a");
+        Visitable subNode = new OperandNode("s");
         ((OperandNode) subNode).position = 1;
         Visitable left = new UnaryOpNode("*", subNode);
         Visitable right = new OperandNode("#");
         ((OperandNode) right).position = 2;
         Visitable refTree = new BinOpNode("°", left, right);
 
-        assertTrue(treeCmp(syntaxTree, refTree));
+        assertTrue(baumVergleich(syntaxTree, refTree));
     }
 
     @Test
     public void validSyntax_KleenePlus() {
-        TopDownParser parser = new TopDownParser("(a+)#");
+        TopDownParser parser = new TopDownParser("(s+)#");
         Visitable syntaxTree = parser.start(null);
 
-        Visitable subNode = new OperandNode("a");
+        Visitable subNode = new OperandNode("s");
         ((OperandNode) subNode).position = 1;
         Visitable left = new UnaryOpNode("+", subNode);
         Visitable right = new OperandNode("#");
         ((OperandNode) right).position = 2;
         Visitable refTree = new BinOpNode("°", left, right);
 
-        assertTrue(treeCmp(syntaxTree, refTree));
+        assertTrue(baumVergleich(syntaxTree, refTree));
     }
 
     @Test
     public void validSyntax_Option() {
-        TopDownParser parser = new TopDownParser("(a?)#");
+        TopDownParser parser = new TopDownParser("(s?)#");
         Visitable syntaxTree = parser.start(null);
 
-        Visitable subNode = new OperandNode("a");
+        Visitable subNode = new OperandNode("s");
         ((OperandNode) subNode).position = 1;
         Visitable left = new UnaryOpNode("?", subNode);
         Visitable right = new OperandNode("#");
         ((OperandNode) right).position = 2;
         Visitable refTree = new BinOpNode("°", left, right);
 
-        assertTrue(treeCmp(syntaxTree, refTree));
+        assertTrue(baumVergleich(syntaxTree, refTree));
     }
 
     @Test
@@ -143,35 +143,34 @@ public class ParserTest {
         ((OperandNode) right).position = 6;
         Visitable refTree = new BinOpNode("°", left, right);
 
-        assertTrue(treeCmp(syntaxTree, refTree));
+        assertTrue(baumVergleich(syntaxTree, refTree));
     }
 
-    public static boolean treeCmp(Visitable visitable1, Visitable visitable2)
+    public static boolean baumVergleich(Visitable visitable1, Visitable visitable2)
     {
         if (visitable1 == visitable2) return true;
-        if (visitable1 == null) return false;
-        if (visitable2 == null) return false;
+        if ((visitable1 == null) || (visitable2 == null)) return false;
         if (visitable1.getClass() != visitable2.getClass()) return false;
         if (visitable1.getClass() == OperandNode.class)
         {
-            OperandNode op1 = (OperandNode) visitable1;
-            OperandNode op2 = (OperandNode) visitable2;
-            return op1.position == op2.position && op1.symbol.equals(op2.symbol);
+            OperandNode operand1 = (OperandNode) visitable1;
+            OperandNode operand2 = (OperandNode) visitable2;
+            return operand1.position == operand2.position && operand1.symbol.equals(operand2.symbol);
         }
         if (visitable1.getClass() == UnaryOpNode.class)
         {
             UnaryOpNode op1 = (UnaryOpNode) visitable1;
             UnaryOpNode op2 = (UnaryOpNode) visitable2;
             return op1.operator.equals(op2.operator)
-                    && treeCmp(op1.subNode, op2.subNode);
+                    && baumVergleich(op1.subNode, op2.subNode);
         }
         if (visitable1.getClass() == BinOpNode.class)
         {
             BinOpNode op1 = (BinOpNode) visitable1;
             BinOpNode op2 = (BinOpNode) visitable2;
             return op1.operator.equals(op2.operator)
-                    && treeCmp(op1.left, op2.left)
-                    && treeCmp(op1.right, op2.right);
+                    && baumVergleich(op1.left, op2.left)
+                    && baumVergleich(op1.right, op2.right);
         }
         throw new IllegalStateException("Invalid node type");
     }
