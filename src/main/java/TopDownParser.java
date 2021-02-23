@@ -7,7 +7,7 @@ public class TopDownParser {
     private int position;
     //Speichert die RA
     private final String eingabe;
-    //Wo muss man die OperandNode stehen
+    //Wo muss die OperandNode stehen
     private int leafPosition;
 
     public TopDownParser(String eingabe){
@@ -47,7 +47,7 @@ public class TopDownParser {
     /**
      *
      * @param parameter
-     * @return diese Funktion gibt die Syntaxbaum zurück
+     * @return diese Funktion gibt die Syntaxbaum zurück oder wirft eine Exception
      */
     public Visitable start(Visitable parameter){
         if (eingabe.charAt(position) == '(')
@@ -70,9 +70,9 @@ public class TopDownParser {
             return opNode;
         }
         else
-            {
+        {
             throw new RuntimeException("Syntax error!");
-            }
+        }
     }
     /**
      *
@@ -85,9 +85,12 @@ public class TopDownParser {
                 eingabe.charAt(position) == '(')
         {
             Visitable termHolder = term(null);
-            return this.RE(termHolder);
+            return RE(termHolder);
         }
-        else throw new RuntimeException("Syntax error!");
+        else
+        {
+            throw new RuntimeException("Syntax error!");
+        }
     }
     /**
      *
@@ -103,7 +106,10 @@ public class TopDownParser {
         else if (eingabe.charAt(position) == ')') {
             return parameter;
         }
-        else throw new RuntimeException("Syntax error!");
+        else
+        {
+            throw new RuntimeException("Syntax error!");
+        }
     }
     /**
      *
@@ -130,9 +136,9 @@ public class TopDownParser {
             return parameter;
         }
         else
-            {
+        {
             throw new RuntimeException("Syntax error!");
-            }
+        }
     }
     /**
      *
