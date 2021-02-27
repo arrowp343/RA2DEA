@@ -24,4 +24,4 @@ public class DepthFirstIterator{
         }
         throw new RuntimeException("Instance root has a bad type");
     }
-}
+}// war vorgegeben, muss nichts mehr gemacht werden

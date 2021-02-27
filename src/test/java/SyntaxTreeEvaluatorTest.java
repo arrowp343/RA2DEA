@@ -57,7 +57,7 @@ public class SyntaxTreeEvaluatorTest {
         ((SyntaxNode) tempRight).lastpos.add(4);
         ((OperandNode) tempRight).position = 4;
 
-        tempRight = new UnaryOpNode("*", tempRight); // evtl unsicher
+        tempRight = new UnaryOpNode("*", tempRight);
         ((SyntaxNode) tempRight).nullable = true;
         ((SyntaxNode) tempRight).firstpos.add(4);
         ((SyntaxNode) tempRight).lastpos.add(4);
