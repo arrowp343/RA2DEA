@@ -1,10 +1,12 @@
+import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
-//Autor: 7862288
+import static org.junit.Assert.assertEquals;
+
+//Ersteller: 7862288
 
 public class FollowposTableGeneratorTest {
     // test fuer zweiten Visitor bzw. dem FollowposTableGenerator
@@ -24,7 +26,7 @@ public class FollowposTableGeneratorTest {
     }
 
     //Hart kodierte SyntaxTree
-    private Visitable createSyntaxTree() {
+    public Visitable createSyntaxTree() {
         //Verwendung der Regex aus der Vorlesung mit terminierendes Symbol (a|b)*cd*#
 
         //linkes Blatt "a" auf der Position 1
@@ -79,10 +81,10 @@ public class FollowposTableGeneratorTest {
         right2.lastpos.add(4);
         right2.nullable = true;
 
-        //rechtes Unterknoten "°" auf der position 4
+        //rechtes Unterknoten "°"
         SyntaxNode left2 = new BinOpNode("°", (Visitable) left1, (Visitable) right2);
-        left2.firstpos.addAll(Arrays.asList(1,2,3));
-        left2.lastpos.addAll(Arrays.asList(3,4));
+        left2.firstpos.addAll(Arrays.asList(1, 2, 3));
+        left2.lastpos.addAll(Arrays.asList(3, 4));
         left2.nullable = false;
 
         //rechtes Blatt "#" terminalzeichen in position 5
@@ -103,7 +105,7 @@ public class FollowposTableGeneratorTest {
     }
 
     //Erstellen Followpos-Tabelle mit den Eingabesymbolen a,b,c,d und #
-    private SortedMap<Integer, FollowposTableEntry> createFollowPosTable() {
+    public SortedMap<Integer, FollowposTableEntry> createFollowPosTable() {
         SortedMap<Integer, FollowposTableEntry> followPosTableGenerated = new TreeMap<>();
 
         //Eintrag des Eingabesymbols "a"
@@ -118,12 +120,12 @@ public class FollowposTableGeneratorTest {
 
         //Eintrag des Eingabesymbols "c"
         followposEntry = new FollowposTableEntry(3, "c");
-        followposEntry.followpos.addAll(Arrays.asList(4,5));
+        followposEntry.followpos.addAll(Arrays.asList(4, 5));
         followPosTableGenerated.put(3, followposEntry);
 
         //Eintrag des Eingabesymbols "d"
         followposEntry = new FollowposTableEntry(4, "d");
-        followposEntry.followpos.addAll(Arrays.asList(4,5));
+        followposEntry.followpos.addAll(Arrays.asList(4, 5));
         followPosTableGenerated.put(4, followposEntry);
 
         //Eintrag des Eingabesymbols "#"
