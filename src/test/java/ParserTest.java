@@ -77,9 +77,9 @@ public class ParserTest {
     public void KleeneStar_Operator() {
         TopDownParser parser = new TopDownParser("(s*)#");
         Visitable syntaxTree = parser.start(null);
-        Visitable subNode = new OperandNode("s");
-        ((OperandNode) subNode).position = 1;
-        Visitable left = new UnaryOpNode("*", subNode);
+        Visitable node = new OperandNode("s");
+        ((OperandNode) node).position = 1;
+        Visitable left = new UnaryOpNode("*", node);
         Visitable right = new OperandNode("#");
         ((OperandNode) right).position = 2;
         Visitable refTree = new BinOpNode("°", left, right);
@@ -90,9 +90,9 @@ public class ParserTest {
     public void KleenePlus_Operator() {
         TopDownParser parser = new TopDownParser("(p+)#");
         Visitable syntaxTree = parser.start(null);
-        Visitable subNode = new OperandNode("p");
-        ((OperandNode) subNode).position = 1;
-        Visitable left = new UnaryOpNode("+", subNode);
+        Visitable node = new OperandNode("p");
+        ((OperandNode) node).position = 1;
+        Visitable left = new UnaryOpNode("+", node);
         Visitable right = new OperandNode("#");
         ((OperandNode) right).position = 2;
         Visitable refTree = new BinOpNode("°", left, right);
@@ -103,9 +103,9 @@ public class ParserTest {
     public void option_Operator() {
         TopDownParser parser = new TopDownParser("(o?)#");
         Visitable syntaxTree = parser.start(null);
-        Visitable subNode = new OperandNode("o");
-        ((OperandNode) subNode).position = 1;
-        Visitable left = new UnaryOpNode("?", subNode);
+        Visitable node = new OperandNode("o");
+        ((OperandNode) node).position = 1;
+        Visitable left = new UnaryOpNode("?", node);
         Visitable right = new OperandNode("#");
         ((OperandNode) right).position = 2;
         Visitable refTree = new BinOpNode("°", left, right);
