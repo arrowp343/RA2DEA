@@ -51,19 +51,19 @@ public class TopDownParser {
             match(')');
             match('#');
             assertEndOfInput();
-            OperandNode opNode = new OperandNode("#");
+            OperandNode operandNode = new OperandNode("#");
             //OperandNode position initialisieren
-            opNode.position = leafPosition;
-            return new BinOpNode("°", subTree, opNode);
+            operandNode.position = leafPosition;
+            return new BinOpNode("°", subTree, operandNode);
         }
         else if (eingabe.charAt(position) == '#')
         {
             match('#');
             assertEndOfInput();
-            OperandNode opNode = new OperandNode("#");
+            OperandNode operandNode = new OperandNode("#");
             //OperandNode position initialisieren
-            opNode.position = leafPosition;
-            return opNode;
+            operandNode.position = leafPosition;
+            return operandNode;
         }
         else
         {
@@ -78,8 +78,7 @@ public class TopDownParser {
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
                 eingabe.charAt(position) == '(')
         {
-            Visitable termHolder = term(null);
-            return RE(termHolder);
+            return RE(term(null));
         }
         else
         {
@@ -90,8 +89,7 @@ public class TopDownParser {
     private Visitable RE(Visitable parameter) {
         if (eingabe.charAt(position) == '|') {
             match('|');
-            Visitable termHolder = term(null);
-            return RE(new BinOpNode("|", parameter, termHolder));
+            return RE(new BinOpNode("|", parameter, term(null)));
         }
         else if (eingabe.charAt(position) == ')') {
             return parameter;
@@ -127,8 +125,7 @@ public class TopDownParser {
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
                 eingabe.charAt(position) == '(')
         {
-            Visitable elemHolder = elem(null);
-            return HOp(elemHolder);
+            return HOp(elem(null));
         }
         else
         {
@@ -144,7 +141,8 @@ public class TopDownParser {
                 eingabe.charAt(position) == ')')
         {
             return parameter;
-        } else if (eingabe.charAt(position) == '*' ||
+        }
+        else if (eingabe.charAt(position) == '*' ||
                 eingabe.charAt(position) == '+' ||
                 eingabe.charAt(position) == '?')
         {

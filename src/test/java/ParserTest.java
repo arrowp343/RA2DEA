@@ -27,13 +27,7 @@ public class ParserTest {
 
     @Test(expected = Exception.class)
     public void unknownOperator_Point() {
-        TopDownParser parser = new TopDownParser("(b.b)#");
-        parser.start(null);
-    }
-
-    @Test(expected = Exception.class)
-    public void unknownOperator_Comma(){
-        TopDownParser parser = new TopDownParser("(b,b)#");
+        TopDownParser parser = new TopDownParser("(a!b)#");
         parser.start(null);
     }
 
