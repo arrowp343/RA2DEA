@@ -35,4 +35,4 @@ class FollowposTableEntry
         hashCode = 31 * hashCode + this.followpos.hashCode();
         return hashCode;
     }
-}
+}// war vorgegeben, muss nichts mehr gemacht werden

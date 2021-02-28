@@ -15,4 +15,4 @@ public class BinOpNode extends SyntaxNode implements Visitable
     {
         visitor.visit(this);
     }
-}
+}// war vorgegeben, muss nichts mehr gemacht werden
