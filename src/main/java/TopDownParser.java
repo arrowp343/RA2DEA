@@ -7,13 +7,13 @@ public class TopDownParser {
     private int position;
     //Speichert die RA
     private final String eingabe;
-    //Wo muss die OperandNode stehen
+    //Wo muss das OperandNode stehen
     private int leafPosition;
 
     public TopDownParser(String eingabe){
         position = 0;
         leafPosition = 1;
-        this.eingabe=eingabe;
+        this.eingabe = eingabe;
     }
     /**
      * Funktion match ist vorgegeben und benutzt, damit wir Codestruktur behalten
@@ -31,11 +31,6 @@ public class TopDownParser {
 
         position++;
     }
-
-    public static void main(String[] args) {
-        TopDownParser parser = new TopDownParser("(aa*a)#");
-        parser.start(null);
-    }
     /**
      * Vorgegebene Funktion
      */
@@ -45,27 +40,28 @@ public class TopDownParser {
         }
     }
     /**
-     *
-     * @param parameter
+     * Das ist die einzige oeffentliche Funktion, die das parsen beginnt
      * @return diese Funktion gibt die Syntaxbaum zurück oder wirft eine Exception
      */
     public Visitable start(Visitable parameter){
         if (eingabe.charAt(position) == '(')
         {
             match('(');
-            Visitable regExp = RegExp(null);
+            Visitable subTree = RegExp(null);
             match(')');
             match('#');
             assertEndOfInput();
             OperandNode opNode = new OperandNode("#");
+            //OperandNode position initialisieren
             opNode.position = leafPosition;
-            return new BinOpNode("°", regExp, opNode);
+            return new BinOpNode("°", subTree, opNode);
         }
         else if (eingabe.charAt(position) == '#')
         {
             match('#');
             assertEndOfInput();
             OperandNode opNode = new OperandNode("#");
+            //OperandNode position initialisieren
             opNode.position = leafPosition;
             return opNode;
         }
@@ -74,11 +70,9 @@ public class TopDownParser {
             throw new RuntimeException("Syntax error!");
         }
     }
-    /**
-     *
-     * @param parameter
-     * @return
-     */
+
+    /**  pro Nichtterminal eine Methode */
+
     private Visitable RegExp(Visitable parameter) {
         if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
@@ -92,11 +86,7 @@ public class TopDownParser {
             throw new RuntimeException("Syntax error!");
         }
     }
-    /**
-     *
-     * @param parameter
-     * @return
-     */
+
     private Visitable RE(Visitable parameter) {
         if (eingabe.charAt(position) == '|') {
             match('|');
@@ -111,26 +101,17 @@ public class TopDownParser {
             throw new RuntimeException("Syntax error!");
         }
     }
-    /**
-     *
-     * @param parameter
-     * @return
-     */
+
     private Visitable term(Visitable parameter) {
         if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
                 eingabe.charAt(position) == '(')
         {
-            Visitable factorHolder = factor(null);
-            Visitable termHolder;
             if (parameter != null) {
-                termHolder = term(new BinOpNode("°", parameter, factorHolder));
-            } else {
-                termHolder = term(factorHolder);
+                return term(new BinOpNode("°", parameter, factor(null)));
             }
-            return termHolder;
-        }
-        else if (eingabe.charAt(position) == '|' ||
+            return term(factor(null));
+        } else if (eingabe.charAt(position) == '|' ||
                 eingabe.charAt(position) == ')')
         {
             return parameter;
@@ -140,30 +121,22 @@ public class TopDownParser {
             throw new RuntimeException("Syntax error!");
         }
     }
-    /**
-     *
-     * @param parameter
-     * @return
-     */
+
     private Visitable factor(Visitable parameter) {
         if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
                 eingabe.charAt(position) == '(')
         {
             Visitable elemHolder = elem(null);
-            return hOp(elemHolder);
+            return HOp(elemHolder);
         }
         else
         {
             throw new RuntimeException("Syntax error!");
         }
     }
-    /**
-     *
-     * @param parameter
-     * @return
-     */
-    private Visitable hOp(Visitable parameter) {
+
+    private Visitable HOp(Visitable parameter) {
         if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
                 eingabe.charAt(position) == '(' ||
@@ -171,8 +144,7 @@ public class TopDownParser {
                 eingabe.charAt(position) == ')')
         {
             return parameter;
-        }
-        else if (eingabe.charAt(position) == '*' ||
+        } else if (eingabe.charAt(position) == '*' ||
                 eingabe.charAt(position) == '+' ||
                 eingabe.charAt(position) == '?')
         {
@@ -186,14 +158,10 @@ public class TopDownParser {
             throw new RuntimeException("Syntax error!");
         }
     }
-    /**
-     *
-     * @param parameter
-     * @return
-     */
+
     private Visitable elem(Visitable parameter) {
-        if (Character.isLetter(eingabe.charAt(position)) ||
-                Character.isDigit(eingabe.charAt(position)))
+        if (Character.isLetter(eingabe.charAt(position)) ||   //a..z, A..Z
+                Character.isDigit(eingabe.charAt(position)))  // 0..9
         {
             return alphanum(null);
         }
@@ -205,14 +173,10 @@ public class TopDownParser {
         }
         else throw new RuntimeException("Syntax error!");
     }
-    /**
-     *
-     * @param parameter
-     * @return
-     */
+
     private Visitable alphanum(Visitable parameter) {
-        if (Character.isLetter(eingabe.charAt(position)) ||
-                Character.isDigit(eingabe.charAt(position)))
+        if (Character.isLetter(eingabe.charAt(position)) ||  //a..z, A..Z
+                Character.isDigit(eingabe.charAt(position))) // 0..9
         {
             char currentChar = eingabe.charAt(position);
             match(currentChar);
