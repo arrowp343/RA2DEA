@@ -150,8 +150,7 @@ public class TopDownParser {
         {
             char currentChar = eingabe.charAt(position);
             match(currentChar);
-            String currentString = Character.toString(currentChar);
-            return new UnaryOpNode(currentString, parameter);
+            return new UnaryOpNode(Character.toString(currentChar), parameter);
         }
         else
         {
@@ -181,10 +180,10 @@ public class TopDownParser {
             char currentChar = eingabe.charAt(position);
             match(currentChar);
             String symbol = Character.toString(currentChar);
-            OperandNode opNode = new OperandNode(symbol);
-            opNode.position = leafPosition;
+            OperandNode operandNode = new OperandNode(symbol);
+            operandNode.position = leafPosition;
             leafPosition++;
-            return opNode;
+            return operandNode;
         }
         else
         {
