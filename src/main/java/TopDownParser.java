@@ -1,14 +1,23 @@
+/*
+ * Autor: 1705159
+ */
+
 public class TopDownParser {
+    // Variable position zeigt die Position des aktuellen Symbol
     private int position;
+    //Speichert die RA
     private final String eingabe;
+    //Wo muss das OperandNode stehen
     private int leafPosition;
 
     public TopDownParser(String eingabe){
         position = 0;
         leafPosition = 1;
-        this.eingabe=eingabe;
+        this.eingabe = eingabe;
     }
-
+    /**
+     * Funktion match ist vorgegeben und benutzt, damit wir Codestruktur behalten
+     */
     private void match(char symbol){
         if((eingabe == null) || ("".equals(eingabe))){
             throw new RuntimeException("Syntax error!");
@@ -22,66 +31,73 @@ public class TopDownParser {
 
         position++;
     }
-
-    public static void main(String[] args) {
-
-        TopDownParser parser = new TopDownParser("(aa*a)#");
-        parser.start(null);
-    }
-
+    /**
+     * Vorgegebene Funktion
+     */
     private void assertEndOfInput() {
         if (this.position < this.eingabe.length()) {
             throw new RuntimeException("No end of input reached!");
         }
     }
-
+    /**
+     * Das ist die einzige oeffentliche Funktion, die das parsen beginnt
+     * @return diese Funktion gibt die Syntaxbaum zurück oder wirft eine Exception
+     */
     public Visitable start(Visitable parameter){
-        if (eingabe.charAt(position) == '(') {
-            this.match('(');
-            Visitable regExp = this.RegExp(null);
-            this.match(')');
-            this.match('#');
-            this.assertEndOfInput();
-            // Prepare return value
-            OperandNode leaf = new OperandNode("#");
-            leaf.position = this.leafPosition;
-            return new BinOpNode("°", regExp, leaf);
+        if (eingabe.charAt(position) == '(')
+        {
+            match('(');
+            Visitable subTree = RegExp(null);
+            match(')');
+            match('#');
+            assertEndOfInput();
+            OperandNode operandNode = new OperandNode("#");
+            //OperandNode position initialisieren
+            operandNode.position = leafPosition;
+            return new BinOpNode("°", subTree, operandNode);
         }
-        else if (eingabe.charAt(position) == '#') {
-            this.match('#');
-            this.assertEndOfInput();
-            // Prepare return value
-            OperandNode leaf = new OperandNode("#");
-            leaf.position = this.leafPosition;
-            return leaf;
+        else if (eingabe.charAt(position) == '#')
+        {
+            match('#');
+            assertEndOfInput();
+            OperandNode operandNode = new OperandNode("#");
+            //OperandNode position initialisieren
+            operandNode.position = leafPosition;
+            return operandNode;
         }
-        else throw new RuntimeException("Syntax error!");
+        else
+        {
+            throw new RuntimeException("Syntax error!");
+        }
     }
+
+    /**  pro Nichtterminal eine Methode */
 
     private Visitable RegExp(Visitable parameter) {
         if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
                 eingabe.charAt(position) == '(')
         {
-            // Prepare return value
-            Visitable term = this.term(null);
-            return this.RE(term);
+            return RE(term(null));
         }
-        else throw new RuntimeException("Syntax error!");
+        else
+        {
+            throw new RuntimeException("Syntax error!");
+        }
     }
 
     private Visitable RE(Visitable parameter) {
         if (eingabe.charAt(position) == '|') {
-            this.match('|');
-            // Prepare return value
-            Visitable term = this.term(null);
-            Visitable root = new BinOpNode("|", parameter, term);
-            return this.RE(root);
+            match('|');
+            return RE(new BinOpNode("|", parameter, term(null)));
         }
         else if (eingabe.charAt(position) == ')') {
             return parameter;
         }
-        else throw new RuntimeException("Syntax error!");
+        else
+        {
+            throw new RuntimeException("Syntax error!");
+        }
     }
 
     private Visitable term(Visitable parameter) {
@@ -89,23 +105,19 @@ public class TopDownParser {
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
                 eingabe.charAt(position) == '(')
         {
-            // Prepare return value
-            Visitable factor = this.factor(null);
-            Visitable term;
             if (parameter != null) {
-                Visitable root = new BinOpNode("°", parameter, factor);
-                term = this.term(root);
-            } else {
-                term = this.term(factor);
+                return term(new BinOpNode("°", parameter, factor(null)));
             }
-            return term;
-        }
-        else if (eingabe.charAt(position) == '|' ||
+            return term(factor(null));
+        } else if (eingabe.charAt(position) == '|' ||
                 eingabe.charAt(position) == ')')
         {
             return parameter;
         }
-        else throw new RuntimeException("Syntax error!");
+        else
+        {
+            throw new RuntimeException("Syntax error!");
+        }
     }
 
     private Visitable factor(Visitable parameter) {
@@ -113,14 +125,15 @@ public class TopDownParser {
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
                 eingabe.charAt(position) == '(')
         {
-            // Prepare return value
-            Visitable elem = this.elem(null);
-            return this.hOp(elem);
+            return HOp(elem(null));
         }
-        else throw new RuntimeException("Syntax error!");
+        else
+        {
+            throw new RuntimeException("Syntax error!");
+        }
     }
 
-    private Visitable hOp(Visitable parameter) {
+    private Visitable HOp(Visitable parameter) {
         if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
                 Character.isDigit(eingabe.charAt(position)) ||    // 0..9
                 eingabe.charAt(position) == '(' ||
@@ -133,42 +146,46 @@ public class TopDownParser {
                 eingabe.charAt(position) == '+' ||
                 eingabe.charAt(position) == '?')
         {
-            char curChar = eingabe.charAt(position);
-            this.match(curChar);
-            String curStr = Character.toString(curChar);
-            return new UnaryOpNode(curStr, parameter);
+            char currentChar = eingabe.charAt(position);
+            match(currentChar);
+            return new UnaryOpNode(Character.toString(currentChar), parameter);
         }
-        else throw new RuntimeException("Syntax error!");
+        else
+        {
+            throw new RuntimeException("Syntax error!");
+        }
     }
 
     private Visitable elem(Visitable parameter) {
-        if (Character.isLetter(eingabe.charAt(position)) ||
-                Character.isDigit(eingabe.charAt(position)))
+        if (Character.isLetter(eingabe.charAt(position)) ||   //a..z, A..Z
+                Character.isDigit(eingabe.charAt(position)))  // 0..9
         {
-            return this.alphanum(null);
+            return alphanum(null);
         }
         else if (eingabe.charAt(position) == '(') {
-            this.match('(');
-            Visitable regExp = this.RegExp(null);
-            this.match(')');
+            match('(');
+            Visitable regExp = RegExp(null);
+            match(')');
             return regExp;
         }
         else throw new RuntimeException("Syntax error!");
     }
 
     private Visitable alphanum(Visitable parameter) {
-        if (Character.isLetter(eingabe.charAt(position)) ||
-                Character.isDigit(eingabe.charAt(position)))
+        if (Character.isLetter(eingabe.charAt(position)) ||  //a..z, A..Z
+                Character.isDigit(eingabe.charAt(position))) // 0..9
         {
-            char curChar = eingabe.charAt(position);
-            this.match(curChar);
-            // Prepare return value
-            String symbol = Character.toString(curChar);
-            OperandNode opNode = new OperandNode(symbol);
-            opNode.position = this.leafPosition;
-            this.leafPosition++;
-            return opNode;
+            char currentChar = eingabe.charAt(position);
+            match(currentChar);
+            String symbol = Character.toString(currentChar);
+            OperandNode operandNode = new OperandNode(symbol);
+            operandNode.position = leafPosition;
+            leafPosition++;
+            return operandNode;
         }
-        else throw new RuntimeException("Syntax error!");
+        else
+        {
+            throw new RuntimeException("Syntax error!");
+        }
     }
 }
