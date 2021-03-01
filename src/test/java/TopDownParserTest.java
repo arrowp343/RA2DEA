@@ -49,16 +49,12 @@ public class TopDownParserTest {
         Visitable parserTree = parser.start(null);
         //Erstellung des erwarteten Baumes
         Visitable nodeLeft = new OperandNode("s");
-        ((OperandNode) nodeLeft).position = 1;
         Visitable nodeRight = new OperandNode("t");
-        ((OperandNode) nodeRight).position = 2;
         nodeRight = new UnaryOpNode("*", nodeRight);
         nodeLeft = new BinOpNode("°", nodeLeft, nodeRight);
         nodeRight = new OperandNode("r");
-        ((OperandNode) nodeRight).position = 3;
         nodeLeft = new BinOpNode("°", nodeLeft, nodeRight);
         nodeRight = new OperandNode("#");
-        ((OperandNode) nodeRight).position = 4;
         Visitable expectedTree = new BinOpNode("°", nodeLeft, nodeRight);
         assertTrue(compareTrees(parserTree, expectedTree));
     }
@@ -69,12 +65,9 @@ public class TopDownParserTest {
         Visitable parserTree = parser.start(null);
         //Erstellung des erwarteten Baumes
         Visitable nodeLeft = new OperandNode("g");
-        ((OperandNode) nodeLeft).position = 1;
         Visitable nodeRight = new OperandNode("g");
-        ((OperandNode) nodeRight).position = 2;
         nodeLeft = new BinOpNode("°", nodeLeft, nodeRight);
         nodeRight = new OperandNode("#");
-        ((OperandNode) nodeRight).position = 3;
         Visitable expectedTree = new BinOpNode("°", nodeLeft, nodeRight);
         assertTrue(compareTrees(parserTree, expectedTree));
     }
@@ -85,12 +78,9 @@ public class TopDownParserTest {
         Visitable parserTree = parser.start(null);
         //Erstellung des erwarteten Baumes
         Visitable nodeLeft = new OperandNode("o");
-        ((OperandNode) nodeLeft).position = 1;
         Visitable nodeRight = new OperandNode("r");
-        ((OperandNode) nodeRight).position = 2;
         nodeLeft = new BinOpNode("|", nodeLeft, nodeRight);
         nodeRight = new OperandNode("#");
-        ((OperandNode) nodeRight).position = 3;
         Visitable expectedTree = new BinOpNode("°", nodeLeft, nodeRight);
         assertTrue(compareTrees(parserTree, expectedTree));
     }
@@ -101,10 +91,8 @@ public class TopDownParserTest {
         Visitable parserTree = parser.start(null);
         //Erstellung des erwarteten Baumes
         Visitable nodeLeft = new OperandNode("p");
-        ((OperandNode) nodeLeft).position = 1;
         nodeLeft = new UnaryOpNode("+", nodeLeft);
         Visitable nodeRight = new OperandNode("#");
-        ((OperandNode) nodeRight).position = 2;
         Visitable expectedTree = new BinOpNode("°", nodeLeft, nodeRight);
         assertTrue(compareTrees(parserTree, expectedTree));
     }
@@ -115,10 +103,8 @@ public class TopDownParserTest {
         Visitable parserTree = parser.start(null);
         //Erstellung des erwarteten Baumes
         Visitable nodeLeft = new OperandNode("o");
-        ((OperandNode) nodeLeft).position = 1;
         nodeLeft = new UnaryOpNode("?", nodeLeft);
         Visitable nodeRight = new OperandNode("#");
-        ((OperandNode) nodeRight).position = 2;
         Visitable expectedTree = new BinOpNode("°", nodeLeft, nodeRight);
         assertTrue(compareTrees(parserTree, expectedTree));
     }
@@ -129,22 +115,16 @@ public class TopDownParserTest {
         Visitable parserTree = parser.start(null);
         //Erstellung des erwarteten Baumes
         Visitable node = new OperandNode("p");
-        ((OperandNode) node).position = 1;
         Visitable nodeLeft = new OperandNode("a");
-        ((OperandNode) nodeLeft).position = 2;
         Visitable nodeRight = new OperandNode("r");
-        ((OperandNode) nodeRight).position = 3;
         nodeLeft = new BinOpNode("|", nodeLeft, nodeRight);
         nodeLeft = new UnaryOpNode("*", nodeLeft);
         nodeLeft = new BinOpNode("°", node, nodeLeft);
         nodeRight = new OperandNode("s");
-        ((OperandNode) nodeRight).position = 4;
         nodeLeft = new BinOpNode("°", nodeLeft, nodeRight);
         nodeRight = new OperandNode("e");
-        ((OperandNode) nodeRight).position = 5;
         nodeLeft = new BinOpNode("°", nodeLeft, nodeRight);
         nodeRight = new OperandNode("#");
-        ((OperandNode) nodeRight).position = 6;
         Visitable expectedTree = new BinOpNode("°", nodeLeft, nodeRight);
         assertTrue(compareTrees(parserTree, expectedTree));
     }

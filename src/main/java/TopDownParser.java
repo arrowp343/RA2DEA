@@ -7,13 +7,9 @@ public class TopDownParser {
     private int position;
     //Speichert die RA
     private final String eingabe;
-    //Variable leafPosition zeigt, wo muss das OperandNode stehen,
-    //weil die OperandNode position ist initial -1
-    private int leafPosition;
 
     public TopDownParser(String eingabe){
         position = 0;
-        leafPosition = 1;
         this.eingabe = eingabe;
     }
     /**
@@ -52,19 +48,13 @@ public class TopDownParser {
             match(')');
             match('#');
             assertEndOfInput();
-            OperandNode operandNode = new OperandNode("#");
-            //OperandNode position initialisieren
-            operandNode.position = leafPosition;
-            return new BinOpNode("°", subTree, operandNode);
+            return new BinOpNode("°", subTree, new OperandNode("#"));
         }
         else if (eingabe.charAt(position) == '#')
         {
             match('#');
             assertEndOfInput();
-            OperandNode operandNode = new OperandNode("#");
-            //OperandNode position initialisieren
-            operandNode.position = leafPosition;
-            return operandNode;
+            return new OperandNode("#");
         }
         else
         {
@@ -179,11 +169,7 @@ public class TopDownParser {
             char aktuellChar = eingabe.charAt(position);
             match(aktuellChar);
             String character = Character.toString(aktuellChar);
-            //OperandNode erstellen und Position festlegen
-            OperandNode operandNode = new OperandNode(character);
-            operandNode.position = leafPosition;
-            leafPosition++;
-            return operandNode;
+            return new OperandNode(character);
         }
         else
         {
