@@ -7,7 +7,8 @@ public class TopDownParser {
     private int position;
     //Speichert die RA
     private final String eingabe;
-    //Wo muss das OperandNode stehen
+    //Variable leafPosition zeigt, wo muss das OperandNode stehen,
+    //weil die OperandNode position ist initial -1
     private int leafPosition;
 
     public TopDownParser(String eingabe){
@@ -74,8 +75,8 @@ public class TopDownParser {
     /**  pro Nichtterminal eine Methode */
 
     private Visitable RegExp(Visitable parameter) {
-        if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
-                Character.isDigit(eingabe.charAt(position)) ||    // 0..9
+        if (Character.isLetter(eingabe.charAt(position)) ||
+                Character.isDigit(eingabe.charAt(position)) ||
                 eingabe.charAt(position) == '(')
         {
             return RE(term(null));
@@ -101,8 +102,8 @@ public class TopDownParser {
     }
 
     private Visitable term(Visitable parameter) {
-        if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
-                Character.isDigit(eingabe.charAt(position)) ||    // 0..9
+        if (Character.isLetter(eingabe.charAt(position)) ||
+                Character.isDigit(eingabe.charAt(position)) ||
                 eingabe.charAt(position) == '(')
         {
             if (parameter != null) {
@@ -121,8 +122,8 @@ public class TopDownParser {
     }
 
     private Visitable factor(Visitable parameter) {
-        if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
-                Character.isDigit(eingabe.charAt(position)) ||    // 0..9
+        if (Character.isLetter(eingabe.charAt(position)) ||
+                Character.isDigit(eingabe.charAt(position)) ||
                 eingabe.charAt(position) == '(')
         {
             return HOp(elem(null));
@@ -134,8 +135,8 @@ public class TopDownParser {
     }
 
     private Visitable HOp(Visitable parameter) {
-        if (Character.isLetter(eingabe.charAt(position)) ||   // a..z, A..z
-                Character.isDigit(eingabe.charAt(position)) ||    // 0..9
+        if (Character.isLetter(eingabe.charAt(position)) ||
+                Character.isDigit(eingabe.charAt(position)) ||
                 eingabe.charAt(position) == '(' ||
                 eingabe.charAt(position) == '|' ||
                 eingabe.charAt(position) == ')')
@@ -146,9 +147,9 @@ public class TopDownParser {
                 eingabe.charAt(position) == '+' ||
                 eingabe.charAt(position) == '?')
         {
-            char currentChar = eingabe.charAt(position);
-            match(currentChar);
-            return new UnaryOpNode(Character.toString(currentChar), parameter);
+            char aktuellChar = eingabe.charAt(position);
+            match(aktuellChar);
+            return new UnaryOpNode(Character.toString(aktuellChar), parameter);
         }
         else
         {
@@ -157,8 +158,8 @@ public class TopDownParser {
     }
 
     private Visitable elem(Visitable parameter) {
-        if (Character.isLetter(eingabe.charAt(position)) ||   //a..z, A..Z
-                Character.isDigit(eingabe.charAt(position)))  // 0..9
+        if (Character.isLetter(eingabe.charAt(position)) ||
+                Character.isDigit(eingabe.charAt(position)))
         {
             return alphanum(null);
         }
@@ -172,13 +173,14 @@ public class TopDownParser {
     }
 
     private Visitable alphanum(Visitable parameter) {
-        if (Character.isLetter(eingabe.charAt(position)) ||  //a..z, A..Z
-                Character.isDigit(eingabe.charAt(position))) // 0..9
+        if (Character.isLetter(eingabe.charAt(position)) ||
+                Character.isDigit(eingabe.charAt(position)))
         {
-            char currentChar = eingabe.charAt(position);
-            match(currentChar);
-            String symbol = Character.toString(currentChar);
-            OperandNode operandNode = new OperandNode(symbol);
+            char aktuellChar = eingabe.charAt(position);
+            match(aktuellChar);
+            String character = Character.toString(aktuellChar);
+            //OperandNode erstellen und Position festlegen
+            OperandNode operandNode = new OperandNode(character);
             operandNode.position = leafPosition;
             leafPosition++;
             return operandNode;
