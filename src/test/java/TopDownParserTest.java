@@ -9,25 +9,25 @@ import static org.junit.Assert.assertTrue;
 public class TopDownParserTest {
     @Test(expected = Exception.class)
     public void without_Hash() {
-        TopDownParser parser = new TopDownParser("(bb)");
+        TopDownParser parser = new TopDownParser("(noHash)");
         parser.start(null);
     }
 
     @Test(expected = Exception.class)
     public void without_OpeningParenthesis() {
-        TopDownParser parser = new TopDownParser("cc)#");
+        TopDownParser parser = new TopDownParser("n)#");
         parser.start(null);
     }
 
     @Test(expected = Exception.class)
     public void without_ClosingParenthesis() {
-        TopDownParser parser = new TopDownParser("(abc#");
+        TopDownParser parser = new TopDownParser("(n#");
         parser.start(null);
     }
 
     @Test(expected = Exception.class)
-    public void unknownOperator_Point() {
-        TopDownParser parser = new TopDownParser("(a!b)#");
+    public void unknownOperator() {
+        TopDownParser parser = new TopDownParser("(a>b)#");
         parser.start(null);
     }
 
@@ -44,97 +44,109 @@ public class TopDownParserTest {
     }
 
     @Test
+    public void KleeneStar_Operator() {
+        TopDownParser parser = new TopDownParser("(st*r)#");
+        Visitable parserTree = parser.start(null);
+        //Erstellung des erwarteten Baumes
+        Visitable nodeLeft = new OperandNode("s");
+        ((OperandNode) nodeLeft).position = 1;
+        Visitable nodeRight = new OperandNode("t");
+        ((OperandNode) nodeRight).position = 2;
+        nodeRight = new UnaryOpNode("*", nodeRight);
+        nodeLeft = new BinOpNode("°", nodeLeft, nodeRight);
+        nodeRight = new OperandNode("r");
+        ((OperandNode) nodeRight).position = 3;
+        nodeLeft = new BinOpNode("°", nodeLeft, nodeRight);
+        nodeRight = new OperandNode("#");
+        ((OperandNode) nodeRight).position = 4;
+        Visitable expectedTree = new BinOpNode("°", nodeLeft, nodeRight);
+        assertTrue(compareTrees(parserTree, expectedTree));
+    }
+
+    @Test
     public void Konkatenation() {
         TopDownParser parser = new TopDownParser("(gg)#");
-        Visitable syntaxTree = parser.start(null);
+        Visitable parserTree = parser.start(null);
         //Erstellung des erwarteten Baumes
-        Visitable left = new OperandNode("g");
-        ((OperandNode) left).position = 1;
-        Visitable right = new OperandNode("g");
-        ((OperandNode) right).position = 2;
-        left = new BinOpNode("°", left, right);
-        right = new OperandNode("#");
-        ((OperandNode) right).position = 3;
-        Visitable refTree = new BinOpNode("°", left, right);
-        assertTrue(compareTrees(syntaxTree, refTree));
+        Visitable nodeLeft = new OperandNode("g");
+        ((OperandNode) nodeLeft).position = 1;
+        Visitable nodeRight = new OperandNode("g");
+        ((OperandNode) nodeRight).position = 2;
+        nodeLeft = new BinOpNode("°", nodeLeft, nodeRight);
+        nodeRight = new OperandNode("#");
+        ((OperandNode) nodeRight).position = 3;
+        Visitable expectedTree = new BinOpNode("°", nodeLeft, nodeRight);
+        assertTrue(compareTrees(parserTree, expectedTree));
     }
 
     @Test
     public void or_Operator() {
-        TopDownParser parser = new TopDownParser("(b|c)#");
-        Visitable syntaxTree = parser.start(null);
+        TopDownParser parser = new TopDownParser("(o|r)#");
+        Visitable parserTree = parser.start(null);
         //Erstellung des erwarteten Baumes
-        Visitable left = new OperandNode("b");
-        ((OperandNode) left).position = 1;
-        Visitable right = new OperandNode("c");
-        ((OperandNode) right).position = 2;
-        left = new BinOpNode("|", left, right);
-        right = new OperandNode("#");
-        ((OperandNode) right).position = 3;
-        Visitable refTree = new BinOpNode("°", left, right);
-        assertTrue(compareTrees(syntaxTree, refTree));
-    }
-
-    @Test
-    public void KleeneStar_Operator() {
-        TopDownParser parser = new TopDownParser("(s*)#");
-        Visitable syntaxTree = parser.start(null);
-        //Erstellung des erwarteten Baumes
-        Visitable node = new OperandNode("s");
-        ((OperandNode) node).position = 1;
-        Visitable left = new UnaryOpNode("*", node);
-        Visitable right = new OperandNode("#");
-        ((OperandNode) right).position = 2;
-        Visitable refTree = new BinOpNode("°", left, right);
-        assertTrue(compareTrees(syntaxTree, refTree));
+        Visitable nodeLeft = new OperandNode("o");
+        ((OperandNode) nodeLeft).position = 1;
+        Visitable nodeRight = new OperandNode("r");
+        ((OperandNode) nodeRight).position = 2;
+        nodeLeft = new BinOpNode("|", nodeLeft, nodeRight);
+        nodeRight = new OperandNode("#");
+        ((OperandNode) nodeRight).position = 3;
+        Visitable expectedTree = new BinOpNode("°", nodeLeft, nodeRight);
+        assertTrue(compareTrees(parserTree, expectedTree));
     }
 
     @Test
     public void KleenePlus_Operator() {
         TopDownParser parser = new TopDownParser("(p+)#");
-        Visitable syntaxTree = parser.start(null);
+        Visitable parserTree = parser.start(null);
         //Erstellung des erwarteten Baumes
-        Visitable node = new OperandNode("p");
-        ((OperandNode) node).position = 1;
-        Visitable left = new UnaryOpNode("+", node);
-        Visitable right = new OperandNode("#");
-        ((OperandNode) right).position = 2;
-        Visitable refTree = new BinOpNode("°", left, right);
-        assertTrue(compareTrees(syntaxTree, refTree));
+        Visitable nodeLeft = new OperandNode("p");
+        ((OperandNode) nodeLeft).position = 1;
+        nodeLeft = new UnaryOpNode("+", nodeLeft);
+        Visitable nodeRight = new OperandNode("#");
+        ((OperandNode) nodeRight).position = 2;
+        Visitable expectedTree = new BinOpNode("°", nodeLeft, nodeRight);
+        assertTrue(compareTrees(parserTree, expectedTree));
     }
 
     @Test
     public void option_Operator() {
         TopDownParser parser = new TopDownParser("(o?)#");
-        Visitable syntaxTree = parser.start(null);
+        Visitable parserTree = parser.start(null);
         //Erstellung des erwarteten Baumes
-        Visitable node = new OperandNode("o");
-        ((OperandNode) node).position = 1;
-        Visitable left = new UnaryOpNode("?", node);
-        Visitable right = new OperandNode("#");
-        ((OperandNode) right).position = 2;
-        Visitable refTree = new BinOpNode("°", left, right);
-        assertTrue(compareTrees(syntaxTree, refTree));
+        Visitable nodeLeft = new OperandNode("o");
+        ((OperandNode) nodeLeft).position = 1;
+        nodeLeft = new UnaryOpNode("?", nodeLeft);
+        Visitable nodeRight = new OperandNode("#");
+        ((OperandNode) nodeRight).position = 2;
+        Visitable expectedTree = new BinOpNode("°", nodeLeft, nodeRight);
+        assertTrue(compareTrees(parserTree, expectedTree));
     }
 
     @Test
     public void multiple_Operators() {
-        TopDownParser parser = new TopDownParser("((a|b)*c)#");
-        Visitable syntaxTree = parser.start(null);
+        TopDownParser parser = new TopDownParser("(p(a|r)*se)#");
+        Visitable parserTree = parser.start(null);
         //Erstellung des erwarteten Baumes
-        Visitable left = new OperandNode("a");
-        ((OperandNode) left).position = 1;
-        Visitable right = new OperandNode("b");
-        ((OperandNode) right).position = 2;
-        left = new BinOpNode("|", left, right);
-        left = new UnaryOpNode("*", left);
-        right = new OperandNode("c");
-        ((OperandNode) right).position = 3;
-        left = new BinOpNode("°", left, right);
-        right = new OperandNode("#");
-        ((OperandNode) right).position = 4;
-        Visitable refTree = new BinOpNode("°", left, right);
-        assertTrue(compareTrees(syntaxTree, refTree));
+        Visitable node = new OperandNode("p");
+        ((OperandNode) node).position = 1;
+        Visitable nodeLeft = new OperandNode("a");
+        ((OperandNode) nodeLeft).position = 2;
+        Visitable nodeRight = new OperandNode("r");
+        ((OperandNode) nodeRight).position = 3;
+        nodeLeft = new BinOpNode("|", nodeLeft, nodeRight);
+        nodeLeft = new UnaryOpNode("*", nodeLeft);
+        nodeLeft = new BinOpNode("°", node, nodeLeft);
+        nodeRight = new OperandNode("s");
+        ((OperandNode) nodeRight).position = 4;
+        nodeLeft = new BinOpNode("°", nodeLeft, nodeRight);
+        nodeRight = new OperandNode("e");
+        ((OperandNode) nodeRight).position = 5;
+        nodeLeft = new BinOpNode("°", nodeLeft, nodeRight);
+        nodeRight = new OperandNode("#");
+        ((OperandNode) nodeRight).position = 6;
+        Visitable expectedTree = new BinOpNode("°", nodeLeft, nodeRight);
+        assertTrue(compareTrees(parserTree, expectedTree));
     }
 
     public boolean compareTrees(Visitable tree1, Visitable tree2)
